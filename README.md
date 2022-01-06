@@ -41,4 +41,4 @@ live-server
 ```
 
 静态服务器启动后，如下图所示：
-![静态服务器画面](img/index.png)
+![静态服务器画面](/img/index.png)
