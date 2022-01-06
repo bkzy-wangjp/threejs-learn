@@ -1,0 +1,152 @@
+<html>
+	<head>
+		<title>第二章</title>
+		<style>
+			body { margin: 0; }
+			overflow: hidden;/* 隐藏body窗口区域滚动条 */
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<!--引入three.js三维引擎-->
+		<script src="node_modules/three/build/three.js"></script>
+		<script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
+		<script>
+			/**
+			* 创建场景对象Scene
+			*/
+			var scene = new THREE.Scene();
+
+			/**
+			* 创建网格模型
+			*/
+			var geometry = new THREE.SphereGeometry(50, 25, 25); //创建一个球体几何对象
+			// 创建一个点材质对象
+			var material = new THREE.PointsMaterial({
+				color: 0x0000ff, //颜色
+				size: 3, //点渲染尺寸
+			});
+			//点模型对象  参数：几何体  点材质
+			var point = new THREE.Points(geometry, material);
+			scene.add(point); //网格模型添加到场景中
+
+			// 直线基础材质对象
+			var material_line = new THREE.LineBasicMaterial({
+				color: 0xff0000
+			});
+			var line = new THREE.Line(geometry, material_line); //线模型对象
+			line.position.set(100,0,0); //位置平移
+			scene.add(line); //点模型添加到场景中
+
+			// 虚线材质对象：产生虚线效果
+			var material_dash = new THREE.LineDashedMaterial({
+				color: 0x00ff00,
+				dashSize: 10,//显示线段的大小。默认为3。
+				gapSize: 5,//间隙的大小。默认为1
+			});
+			var dash = new THREE.Line(geometry, material_dash); //线模型对象
+			dash.position.set(0,100,0);//
+			scene.add(dash);
+			
+			// 基础网格模型
+			var material_mesh = new THREE.MeshBasicMaterial({
+				color: 0xffff00,
+				side:THREE.DoubleSide,
+			});
+			var mesh = new THREE.Mesh(geometry, material_mesh); //网格模型对象
+			mesh.position.set(-100,0,0);//
+			scene.add(mesh);
+
+			// 暗淡漫反射 网格模型
+			var material_lamber = new THREE.MeshLambertMaterial({
+				color: 0x00ffff,
+			});
+			var lamber = new THREE.Mesh(geometry, material_lamber); //网格模型对象
+			lamber.position.set(0,-100,0);//
+			scene.add(lamber);
+
+			// 高亮镜面反射 网格模型
+			var material_phong = new THREE.MeshPhongMaterial({
+				color: 0xff00ff,
+				// transparent设置为true，开启透明，否则opacity不起作用
+				transparent: true,
+				// 设置材质透明度
+				opacity: 0.4,
+			});
+			var phong = new THREE.Mesh(geometry, material_phong); //网格模型对象
+			phong.position.set(0,0,100);//
+			scene.add(phong);
+
+			// 金属材质反射 网格模型
+			var material_stand = new THREE.MeshStandardMaterial({
+				color: 0xff0066,
+			});
+			var stand = new THREE.Mesh(geometry, material_stand); //网格模型对象
+			stand.position.set(0,0,-100);//
+			scene.add(stand);
+
+			// 物理材质反射 网格模型
+			var material_physical = new THREE.MeshPhysicalMaterial({
+				color: 0xff0088,
+			});
+			var physical = new THREE.Mesh(geometry, material_physical); //网格模型对象
+			physical.position.set(0,-100,100);//
+			//后设置材质的透明度属性
+			material_physical.transparent = true;//是否开启透明度
+			material_physical.opacity = 0.4;//透明度系数
+			scene.add(physical);
+			
+
+			// 辅助坐标系  参数250表示坐标系大小，可以根据场景大小去设置
+			var axesHelper = new THREE.AxesHelper(50);
+			scene.add(axesHelper);
+
+			/**
+			* 光源设置
+			*/
+			//点光源
+			var point = new THREE.PointLight(0xffffff);//定义点光源,设置光照强度
+			point.position.set(400,400,300);//点光源位置
+			scene.add( point);//添加点光源到场景中
+			//环境光
+			var ambient = new THREE.AmbientLight(0x333333);//定义环境光,设置颜色
+			scene.add( ambient);//添加环境光到场景中
+
+			/**
+			* 相机设置
+			*/
+			var width = window.innerWidth;//窗口宽度
+			var height = window.innerHeight;//窗口高度
+			var k = width / height;//窗口宽高比
+			var s = 200;//三维场景显示范围控制系数，系数越大，显示的范围越大
+			var camera = new THREE.OrthographicCamera(-s * k,s*k,s , -s,1,1000);//正射投影相机
+			//var camera = new THREE.PerspectiveCamera( 30, k, 0.1, 1000 );//投射投影相机
+			camera.position.set(200,300,200);//设置相机位置
+			camera.lookAt(scene.position);//设置相机方向(指向的场景对象)
+
+			/**
+			* 创建渲染器对象
+			*/
+			var renderer = new THREE.WebGLRenderer();//创建渲染器对象
+			renderer.setSize(width, height);//设置渲染区域大小
+			renderer.setClearColor(0xb9d3ff,1);//设置背景颜色
+			document.body.appendChild( renderer.domElement );//body元素中插入canvas对象
+			//执行渲染操作,指定场景、相机作为参数
+			renderer.render(scene,camera);
+			
+			/**
+			* 设置自动旋转
+			*/
+			var animate = function () {
+				requestAnimationFrame( animate );
+				//mesh.rotation.x += 0.01;
+				//mesh.rotation.y += 0.01;
+				renderer.render( scene, camera );
+			};
+
+			animate();
+			var controls = new THREE.OrbitControls(camera,renderer.domElement);//创建控件对象
+			
+		</script>
+	</body>
+</html>
